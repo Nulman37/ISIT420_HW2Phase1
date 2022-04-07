@@ -10,6 +10,14 @@ let CdIDArray = [123456, 123654, 321456, 321654, 654123,
                  654321, 543216, 354126, 621453, 623451];
 
 
+function GenerateRandomNumberInRange(min, max)
+{
+    // min - inclusive | max - exclusive
+    min = Math.ceil(min);
+    max = Math.floor(max) - 1;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function CreateRandomOrder()
 {
     // Fields
@@ -20,22 +28,21 @@ function CreateRandomOrder()
     let randomDate;
 
     // Find a random store then select a random employee from that store
-    let randomNumber = Math.floor((Math.random() * 5) + 1);
+    let randomNumber = GenerateRandomNumberInRange(0, storesAndEmployeesArray.length);
     randomStore = storesAndEmployeesArray[randomNumber][0];
-    randomEmployee = storesAndEmployeesArray[randomNumber][1][Math.floor((Math.random() * 3) + 1)];
+    randomEmployee = storesAndEmployeesArray[randomNumber][1][GenerateRandomNumberInRange(0,storesAndEmployeesArray[randomNumber][1].length)];
     
     // Find a CD in the CDArray between position 0 and 9
-    randomCD = CdIDArray[Math.floor(Math.random() * 10)];
+    randomCD = CdIDArray[GenerateRandomNumberInRange(0, CdIDArray.length)];
 
     // Generate a random price between $5 and $15
-    randomPrice = Math.floor((Math.random() * (15 - 5 + 1)) + 5);
+    randomPrice = GenerateRandomNumberInRange(5,16);
 
     // Get the current date and time for the sample order
     randomDate = new Date();
     //randomDate.setMinutes(randomDate.getMinutes() + 30);
 
     let newOrder = new CDOrder(randomStore, randomEmployee, randomCD, randomPrice, randomDate);
-
     return newOrder;
 }
 
@@ -48,8 +55,6 @@ let CDOrder = function (pStore, pEmp, pCD, pPrice, pDate) {
 }
 
 //let salesArray = [];
-
-
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -86,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Submit 500 orders
     document.getElementById("submit-500").addEventListener("click", function ()
     {
-        let minuteOffset = 30;
+        let minuteOffset = 0;
         for (let i = 0; i < 500; i++){
             // Create order
             let randomOrder = CreateRandomOrder();
@@ -104,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .catch(err => console.log(err));
 
             // Increment the date offset for upcoming orders
-            minuteOffset += Math.floor((Math.random() * 30) + 2);
+            minuteOffset += GenerateRandomNumberInRange(2, 15);
         }
     });
 });  
