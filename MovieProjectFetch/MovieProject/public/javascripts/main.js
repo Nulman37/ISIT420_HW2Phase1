@@ -1,15 +1,131 @@
+// Stores and employees
+let storesAndEmployeesArray = [[98053,[1,2,3,4]],
+                               [98007,[5,6,7,8]],
+                               [98077,[9,10,11,12]],
+                               [98055,[13,14,15,16]],
+                               [98011,[17,18,19,20]],
+                               [98046,[21,22,23,24]]];
+// CDs
+let CdIDArray = [123456, 123654, 321456, 321654, 654123,
+                 654321, 543216, 354126, 621453, 623451];
 
-let movieArray = [];
 
-// define a constructor to create movie objects
-let MovieObject = function (pTitle, pYear, pGenre, pMan, pWoman, pURL) {
-    this.ID = Math.random().toString(16).slice(5)  // tiny chance could get duplicates!
-    this.Title = pTitle;
-    this.Year = pYear;
-    this.Genre = pGenre;  // action  comedy  drama  horrow scifi  musical  western
+
+function CreateRandomOrder()
+{
+    let randomStore;
+    let randomEmployee;
+    let randomCD;
+    let randomPrice;
+    let randomDate;
+
+    // Find a random store then select a random employee from that store
+    let randomNumber = Math.floor((Math.random() * 5) + 1);
+    randomStore = storesAndEmployeesArray[randomNumber][0];
+    randomEmployee = storesAndEmployeesArray[randomNumber][Math.floor((math.random() * 3) + 1)];
+    
+    // Find a CD in the CDArray between position 0 and 9
+    randomCD = CdIDArray[Math.floor((Math.random() * 9) + 1)];
+
+    // Generate a random price between $5 and $15
+    randomPrice = Math.floor((Math.random() * 15) + 5);
+
+    // Get the current date and time for the sample order
+    randomDate = Date.now();
+
+    let newOrder = new CDOrder(randomStore, randomEmployee, randomCD, randomPrice, randomDate);
+
+    return newOrder;
 }
 
-let selectedGenre = "not selected";
+let CDOrder = function (pStore, pEmp, pCD, pPrice, pDate) {
+    this.StoreID = pStore;
+    this.SalesPersonID = pEmp;
+    this.CdID = pCD;
+    this.PricePaid = pPrice;
+    this.Date = pDate;
+}
+
+//let salesArray = [];
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+// add button events ************************************************************************
+    
+// display an order
+    document.getElementById("create").addEventListener("click", function ()
+    {
+        let randomOrder = CreateRandomOrder();
+        document.getElementById("storeid").value = randomOrder.StoreID;
+        document.getElementById("salespersonid").value = randomOrder.SalesPersonID;
+        document.getElementById("cdid").value = randomOrder.CdID;
+        document.getElementById("pricepaid").value = randomOrder.PricePaid;
+        document.getElementById("date").value = randomOrder.Date;
+    });
+
+// Submit an order
+    document.getElementById("submit-1").addEventListener("click", function ()
+    {
+        let randomOrder = CreateRandomOrder();
+
+        fetch('/AddOrder', {
+            method: "POST",
+            body: JSON.stringify(randomOrder),
+            headers: {"Content-type": "application/json; charset=UTF-8"}
+            })
+            .then(response => response.json()) 
+            .then(json => console.log(json))
+            .catch(err => console.log(err));
+
+    });
+
+// Submit 500 orders
+    document.getElementById("submit-500").addEventListener("click", function ()
+    {
+        let dateOffset = 500;
+        for (let i = 0; i < 500; i++){
+            // Create order
+            let randomOrder = CreateRandomOrder();
+            // Add date offset
+            randomOrder.Date = this.Date + dateOffset;
+
+            // Save order to file
+            fetch('/AddOrder', {
+                method: "POST",
+                body: JSON.stringify(randomOrder),
+                headers: {"Content-type": "application/json; charset=UTF-8"}
+                })
+                .then(response => response.json()) 
+                .then(json => console.log(json))
+                .catch(err => console.log(err));
+
+            // Increment the date offset for upcoming orders
+            dateOffset += Math.floor((Math.random() * 30000) + 500);
+        }
+    });
+});  
+
+
+
+
+
+/* 
+
+
+
+//let movieArray = [];
+
+// define a constructor to create movie objects
+//let MovieObject = function (pTitle, pYear, pGenre, pMan, pWoman, pURL) {
+//    this.ID = Math.random().toString(16).slice(5)  // tiny chance could get duplicates!
+//    this.Title = pTitle;
+//    this.Year = pYear;
+//    this.Genre = pGenre;  // action  comedy  drama  horrow scifi  musical  western
+//}
+
+//let selectedGenre = "not selected";
 
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -148,3 +264,4 @@ function deleteMovie(ID) {
 
 
   
+ */
