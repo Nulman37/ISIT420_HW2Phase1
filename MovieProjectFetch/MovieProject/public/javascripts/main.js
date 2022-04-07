@@ -12,6 +12,7 @@ let CdIDArray = [123456, 123654, 321456, 321654, 654123,
 
 function CreateRandomOrder()
 {
+    // Fields
     let randomStore;
     let randomEmployee;
     let randomCD;
