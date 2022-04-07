@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // Submit 500 orders
     document.getElementById("submit-500").addEventListener("click", function ()
     {
-        let minuteOffset = 30;
+        let minuteOffset = 0;
         for (let i = 0; i < 500; i++){
             // Create order
             let randomOrder = CreateRandomOrder();
