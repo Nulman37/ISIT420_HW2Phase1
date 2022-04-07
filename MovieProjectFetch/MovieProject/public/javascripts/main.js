@@ -10,7 +10,6 @@ let CdIDArray = [123456, 123654, 321456, 321654, 654123,
                  654321, 543216, 354126, 621453, 623451];
 
 
-
 function CreateRandomOrder()
 {
     let randomStore;
@@ -22,16 +21,17 @@ function CreateRandomOrder()
     // Find a random store then select a random employee from that store
     let randomNumber = Math.floor((Math.random() * 5) + 1);
     randomStore = storesAndEmployeesArray[randomNumber][0];
-    randomEmployee = storesAndEmployeesArray[randomNumber][Math.floor((math.random() * 3) + 1)];
+    randomEmployee = storesAndEmployeesArray[randomNumber][1][Math.floor((Math.random() * 3) + 1)];
     
     // Find a CD in the CDArray between position 0 and 9
-    randomCD = CdIDArray[Math.floor((Math.random() * 9) + 1)];
+    randomCD = CdIDArray[Math.floor(Math.random() * 10)];
 
     // Generate a random price between $5 and $15
-    randomPrice = Math.floor((Math.random() * 15) + 5);
+    randomPrice = Math.floor((Math.random() * (15 - 5 + 1)) + 5);
 
     // Get the current date and time for the sample order
-    randomDate = Date.now();
+    randomDate = new Date();
+    //randomDate.setMinutes(randomDate.getMinutes() + 30);
 
     let newOrder = new CDOrder(randomStore, randomEmployee, randomCD, randomPrice, randomDate);
 
@@ -58,6 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("create").addEventListener("click", function ()
     {
         let randomOrder = CreateRandomOrder();
+
         document.getElementById("storeid").value = randomOrder.StoreID;
         document.getElementById("salespersonid").value = randomOrder.SalesPersonID;
         document.getElementById("cdid").value = randomOrder.CdID;
@@ -66,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 // Submit an order
-    document.getElementById("submit-1").addEventListener("click", function ()
+    document.getElementById("submit-one").addEventListener("click", function ()
     {
         let randomOrder = CreateRandomOrder();
 
@@ -84,12 +85,12 @@ document.addEventListener("DOMContentLoaded", function () {
 // Submit 500 orders
     document.getElementById("submit-500").addEventListener("click", function ()
     {
-        let dateOffset = 500;
+        let minuteOffset = 30;
         for (let i = 0; i < 500; i++){
             // Create order
             let randomOrder = CreateRandomOrder();
             // Add date offset
-            randomOrder.Date = this.Date + dateOffset;
+            randomOrder.Date.setMinutes(randomOrder.Date.getMinutes() + minuteOffset);
 
             // Save order to file
             fetch('/AddOrder', {
@@ -102,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .catch(err => console.log(err));
 
             // Increment the date offset for upcoming orders
-            dateOffset += Math.floor((Math.random() * 30000) + 500);
+            minuteOffset += Math.floor((Math.random() * 30) + 2);
         }
     });
 });  
