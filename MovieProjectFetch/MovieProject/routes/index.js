@@ -1,4 +1,3 @@
-let x = 2;
 var express = require('express');
 var router = express.Router();
 var fs = require("fs");
