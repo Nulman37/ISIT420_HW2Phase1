@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .catch(err => console.log(err));
 
             // Increment the date offset for upcoming orders
-            minuteOffset += GenerateRandomNumberInRange(2, 15);
+            minuteOffset += GenerateRandomNumberInRange(2, 30);
         }
     });
 });  
