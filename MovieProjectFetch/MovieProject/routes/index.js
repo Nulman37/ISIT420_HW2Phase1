@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var fs = require("fs");
 
 const mongoose = require("mongoose");
 const OrderSchema = require("../orderSchema");
@@ -8,6 +7,20 @@ const OrderSchema = require("../orderSchema");
 const dbURI = "mongodb+srv://MongoTravis:GTPQNat22X5w3rX@cluster0.67dbn.mongodb.net/Movies?retryWrites=true&w=majority";
 
 mongoose.set('useFindAndModify', false);
+
+const options = {
+  reconnectTries: Number.MAX_VALUE,
+  poolSize: 10
+};
+
+mongoose.connect(dbURI, options).then(
+  () => {
+    console.log("Database connection established!");
+  },
+  err => {
+    console.log("Error connecting to Database instance due to: ", err);
+  }
+);
 
 // server side cached data
 let serverOrderArray = [];
@@ -21,43 +34,54 @@ let CDOrder = function (pStore, pEmp, pCD, pPrice, pDate) {
   this.Date = pDate;
 }
 
-fileRW = {
-  read: function() {
-    const stat = fs.statSync('moviesData.json');
-    var fileData = fs.readFileSync('moviesData.json');
-    serverOrderArray = JSON.parse(fileData);
-  },
-  write: function() {
-    let data = JSON.stringify(serverOrderArray);
-    fs.writeFileSync('moviesData.json', data);
-  }
-}
-
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.sendFile('index.html');
 });
 
-/* GET all Movie data */
+/* GET all Order data */
 router.get('/getAllOrders', function(req, res) {
-  fileRW.read();
-  res.status(200).json(serverOrderArray);
+  OrderSchema.find({}, (err, allOrders) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+    res.status(200).json(allOrders);
+  });
 });
 
 /* Add one new Order */
 router.post('/AddOrder', function(req, res) {
-  const newOrder = req.body;  // get the object from the req object sent from browser
-  console.log(newOrder);
-  serverOrderArray.push(newOrder);  // add it to our "DB"  (array)
-  fileRW.write();
-  // prepare a reply to the browser
-  var response = {
-    status  : 200,
-    success : 'Added Successfully'
-  }
-  res.end(JSON.stringify(response)); // send reply
+
+  let newOrder = new OrderSchema(req.body);  
+  console.log(req.body);
+  newOrder.save((err, todo) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+    else {
+      var response = {
+        status  : 200,
+        success : 'Added Successfully'
+      }
+      res.end(JSON.stringify(response)); // send reply
+    }
+  });
 });
 
+// delete Order
+router.delete('/DeleteOrder/:ID', function (req, res) {
+  OrderSchema.deleteOne({ ID: req.params.ID }, (err, note) => { 
+    if (err) {
+      res.status(404).send(err);
+    }
+    var response = {
+      status  : 200,
+      success : 'Order ' +  req.params.ID + ' deleted!'
+    }
+    res.end(JSON.stringify(response)); // send reply
+  });
+});
 
 
 
