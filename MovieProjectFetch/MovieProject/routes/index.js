@@ -2,6 +2,13 @@ var express = require('express');
 var router = express.Router();
 var fs = require("fs");
 
+const mongoose = require("mongoose");
+const OrderSchema = require("../orderSchema");
+
+const dbURI = "mongodb+srv://MongoTravis:GTPQNat22X5w3rX@cluster0.67dbn.mongodb.net/Movies?retryWrites=true&w=majority";
+
+mongoose.set('useFindAndModify', false);
+
 // server side cached data
 let serverOrderArray = [];
 
