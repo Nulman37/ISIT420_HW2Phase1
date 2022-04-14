@@ -9,6 +9,7 @@ let storesAndEmployeesArray = [[98053,[1,2,3,4]],
 let CdIDArray = [123456, 123654, 321456, 321654, 654123,
                  654321, 543216, 354126, 621453, 623451];
 
+let movieArray = [];                 
 
 function GenerateRandomNumberInRange(min, max)
 {
@@ -112,9 +113,59 @@ document.addEventListener("DOMContentLoaded", function () {
             minuteOffset += GenerateRandomNumberInRange(2, 30);
         }
     });
+
+    // Get Top 3 CDs sold and the quantity sold for each
+    document.getElementById("top-3").addEventListener("click", function ()
+    {
+        fetch('/getTopThreeProductSold')
+        .then(response => response.json())
+        .then(response => fillULTopCDs(response))
+        .catch(err => console.log('Request Failed', err));
+    });
+
+    // Get store rankings by transactions performed
+    document.getElementById("rank-stores").addEventListener("click", function ()
+    {
+        fetch('/getStoreRanking')
+        .then(response => response.json())
+        .then(response => fillULStores(response))
+        .catch(err => console.log('Request Failed', err));
+    });
 });  
 
+function fillULTopCDs(data) {
+    // clear prior data
+    var divMovieList = document.getElementById("top-3-cds-list");
+    while (divMovieList.firstChild) {    // remove any old data so don't get duplicates
+        divMovieList.removeChild(divMovieList.firstChild);
+    };
 
+    var ul = document.createElement('ul');
+    movieArray = data;
+    movieArray.forEach(function (element) {   // use handy array forEach method
+        var li = document.createElement('li');
+        li.innerHTML = element._id + ":  &nbsp &nbsp  &nbsp &nbsp " + element.count;
+        ul.appendChild(li);
+    });
+    divMovieList.appendChild(ul)
+}
+
+function fillULStores(data) {
+    movieArray = data;
+    // clear prior data
+    var divMovieList = document.getElementById("store-ranking-list");
+    while (divMovieList.firstChild) {    // remove any old data so don't get duplicates
+        divMovieList.removeChild(divMovieList.firstChild);
+    };
+
+    var ul = document.createElement('ul');
+    movieArray.forEach(function (element,) {   // use handy array forEach method
+        var li = document.createElement('li');
+        li.innerHTML = element._id + ":  &nbsp &nbsp  &nbsp &nbsp " + element.count;
+        ul.appendChild(li);
+    });
+    divMovieList.appendChild(ul)
+}
 
 
 

@@ -83,6 +83,37 @@ router.delete('/DeleteOrder/:ID', function (req, res) {
   });
 });
 
+/* GET top 3 CDs sold */
+router.get('/getTopThreeProductSold', function(req, res) {
+  OrderSchema.aggregate()
+    .group({_id: '$CdID', count: { $sum: 1 }})
+    .limit(3)
+    .sort('-count')
+    .exec(function (err, topThree) {
+    if (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+    console.log(topThree);
+    res.status(200).json(topThree);
+    });
+  });
+  
+  /* GET ranking of all stores by transactions performed */
+  router.get('/getStoreRanking', function(req, res) {
+  OrderSchema.aggregate()
+    .group({_id: '$StoreID', count: { $sum: 1 }})
+    .sort('-count')
+    .exec(function (err, storeRanking) {
+    if (err) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+    console.log(storeRanking);
+    res.status(200).json(storeRanking);
+    });
+  });
+
 
 
 // start by creating data so we don't have to type it in each time
